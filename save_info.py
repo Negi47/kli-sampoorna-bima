@@ -110,7 +110,10 @@ def post_method():
             for user in users:
                 if str(form_data["reference_id"]) == str(user.payu_id):
                     logger.info(f"USER MATCHED {user}")
-
+                    
+                    user.status = form_data['txn_status']
+#		    db.session.merge(user)
+                    db.session.commit()
                     policySaleReference = user.policy_sale_reference
                     txn_id = user.bus_transaction_id
                     user_details["phone_number"] = str(user.phone_number)
@@ -126,13 +129,13 @@ def post_method():
                     print("Tax id", txn_id)
                     break;
             
-            user_info = UserInfo(
-                status = form_data["txn_status"]
-            )
+#            user_info = UserInfo(
+#                status = form_data["txn_status"]
+#            )
 
-            db.session.add(user_info)
-            db.session.commit()
-            db.session.refresh(user_info)
+ #           db.session.add(user_info)
+  #          db.session.commit()
+   #         db.session.refresh(user_info)
 
             # if form_data["BusRes"] == "Success":
             if form_data["txn_status"] == "captured":
