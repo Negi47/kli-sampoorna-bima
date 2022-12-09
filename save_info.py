@@ -183,7 +183,8 @@ def post_method():
                                         if (send_push_notification_response!="EXCEPTION") and (send_push_notification_response!="TIMEOUT"):
                                             # data = "Please return to WhatsApp Bot for continuing journey"
                                             status = flask.Response(status = 200)
-                                            return render_template("index.html", data = data)
+                                            # return render_template("index.html", data = data)
+                                            return status
                                             
                                         else:
                                             return f"[~~~~~ SEND PUSH NOTIFCATIONS INTERAKT API] {send_push_notification_response}"
