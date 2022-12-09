@@ -126,8 +126,9 @@ def post_method():
                     print("Tax id", txn_id)
                     break;
             
-            user_info = UserInfo( 
-            status = form_data["txn_status"])
+            user_info = UserInfo(
+                status = form_data["txn_status"]
+            )
 
             db.session.add(user_info)
             db.session.commit()
