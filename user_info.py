@@ -13,6 +13,7 @@ class UserInfo(db.Model):
     bus_transaction_id = db.Column(db.Numeric(10,0), nullable = False)
     payu_id = db.Column(db.String(40), nullable = False)
     amount = db.Column(db.String(40), nullable = False)
+    status = db.Column(db.String(40), nullable = False, default = "pending")
     policy_reference0 =  db.Column(db.String(14), nullable = False)
     policy_reference1 =  db.Column(db.String(14), nullable = True)
     policy_reference2 =  db.Column(db.String(14), nullable = True)
