@@ -38,6 +38,8 @@ def save_user_info():
     policy_reference0 = ""
     policy_sale_reference = ""
     external_reference0 = ""
+    payu_id = ""
+    amount = ""
     if request.method == "GET":
         return "Get method is not allowed"
     elif request.method == "POST":
@@ -47,6 +49,8 @@ def save_user_info():
             user_info = UserInfo( 
                 phone_number = data.get("phone_number"), 
                 bus_transaction_id = data.get("bus_txn_id"), 
+                payu_id = data.get("payu_id"), 
+                amount = data.get("amount"),
                 policy_reference0= data.get("policy_reference0"),
                 policy_reference1= data.get("policy_reference1"),
                 policy_reference2= data.get("policy_reference2"), 
@@ -65,6 +69,10 @@ def save_user_info():
                 return ("Policy Sale Reference cannot be None", 406)
             if external_reference0 is None:
                 return ("External Reference 0 cannot be None", 406)
+            if payu_id is None:
+                return ("PayU ID cannot be None", 406)
+            if amount is None:
+                return ("Amount cannot be None", 406)
 
             db.session.add(user_info)
             db.session.commit()
