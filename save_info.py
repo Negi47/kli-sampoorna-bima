@@ -181,7 +181,8 @@ def post_method():
                                         logger.info(f"[SPN RESPONSE] : {send_push_notification_response}")
 
                                         if (send_push_notification_response!="EXCEPTION") and (send_push_notification_response!="TIMEOUT"):
-                                            data = "Please return to WhatsApp Bot for continuing journey"
+                                            # data = "Please return to WhatsApp Bot for continuing journey"
+                                            status = flask.Response(status = 200)
                                             return render_template("index.html", data = data)
                                             
                                         else:
