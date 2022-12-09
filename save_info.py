@@ -1,7 +1,7 @@
 from distutils.log import debug
 from email import policy
 from imghdr import what
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 import logging
 import flask
 from flask_sqlalchemy import SQLAlchemy
@@ -97,6 +97,11 @@ def post_method():
     txn_id = ""
     data = request.data
     form_data = request.form
+    headers = request.headers
+    auth = headers.get("Authorization")
+    if auth != 'Bearer hgB9i16Z1hCYUKT6cpCF3fFuYJM6H7BJ':
+        return jsonify({"message": "ERROR: Unauthorized"}), 401
+
     logger.info('DATA %s',str(data))
     logger.info('FORM DATA %s',str(form_data))
 
