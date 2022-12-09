@@ -112,7 +112,7 @@ def post_method():
                     logger.info(f"USER MATCHED {user}")
                     
                     user.status = form_data['txn_status']
-#		    db.session.merge(user)
+                    db.session.merge(user)
                     db.session.commit()
                     policySaleReference = user.policy_sale_reference
                     txn_id = user.bus_transaction_id
