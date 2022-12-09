@@ -205,10 +205,14 @@ def post_method():
                 # if (send_push_notification_response=="EXCEPTION") and (send_push_notification_response=="TIMEOUT"):
                 #     return f"[~~~~~ SEND PUSH NOTIFCATIONS INTERAKT API] {send_push_notification_response}"
                 # return "Payment Failed.!!!"        
-        
+
+            status = flask.Response(status = 200)
+
         except Exception as e:
-            logger.error(f"Exception Occured {e}")   
-    status = flask.Response(status = 200)
+            logger.error(f"Exception Occured {e}") 
+            status = flask.Response(status = 500)
+            
+    
     # data = "Sorry, we weren’t able to complete your transaction due to some technical issue. Please click on below button to go back to WhatsApp and retry the payment."
     # return render_template("index.html", data = data)
     return status
