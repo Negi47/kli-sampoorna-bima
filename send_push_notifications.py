@@ -30,6 +30,7 @@ def send_push_notifcations(phone_number,event_name):
             }
 
             response = requests.request("POST", url, headers=headers, data=payload)
+            logger.info(f"**Push Notification API** URL={url} Headers={headers} Payload={payload} ResponseCode={response.status_code} Response={response.text}")
 
             if response.status_code == 201:
                 logger.info(f" [PUSH NOTIFICATION INTERAKT API] Response : {response.text}")
@@ -67,7 +68,7 @@ def create_user(phone_number):
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
-        print("!!!!!!!!!!!!", response.status_code)
+        logger.info(f"** Create User in Interakt ** URL={url} Headers={headers} Payload={payload} ResponseCode={response.status_code} Response={response.text}")
         if response.status_code == 202:
             logger.info(f" [CREATE USER INTERAKT API] Response : {response.text}")
             return response

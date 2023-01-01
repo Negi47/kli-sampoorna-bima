@@ -106,10 +106,11 @@ def post_method():
     logger.info('FORM DATA %s',str(form_data))
 
     users = UserInfo.query.all()
+    print("** Users list found In DB **",users)
     if not users:
         print("No users found. Database Empty")
     else:
-        print("Users list found.",users)
+        print("** Came in Else Part **")
         user_details = policy_details = {}
         try:
             for user in users:
@@ -138,68 +139,68 @@ def post_method():
 #                status = form_data["txn_status"]
 #            )
 
- #           db.session.add(user_info)
-  #          db.session.commit()
-   #         db.session.refresh(user_info)
-
+#            db.session.add(user_info)
+#            db.session.commit()
+#            db.session.refresh(user_info)
+            print("** Data from User Details **",user_details)
             # if form_data["BusRes"] == "Success":
             if form_data["txn_status"] == "captured":
-                        if not txn_id:
-                            print("user details not matched. ")
+                if not txn_id:
+                    print("user details not matched. ")
 
-                        else:
-                            ## Call Sumit External Payment API
-                            phonenumber = user_details.get("phone_number")
-                            whatsapp_consent_response = WC(phonenumber)
+                else:
+                    ## Call Sumit External Payment API
+                    phonenumber = user_details.get("phone_number")
+                    whatsapp_consent_response = WC(phonenumber)
 
-                            # if (whatsapp_consent_response!="EXCEPTION") and (whatsapp_consent_response!="TIMEOUT"):
-                            seb_response = SEP(user_details)
-                            print("SEB Response", seb_response)
-                            logger.info(f"[SEB RESPONSE] : {seb_response}")
+                    # if (whatsapp_consent_response!="EXCEPTION") and (whatsapp_consent_response!="TIMEOUT"):
+                    seb_response = SEP(user_details)
+                    print("SEB Response", seb_response)
+                    logger.info(f"[SEB RESPONSE] : {seb_response}")
+                    
+                    if (seb_response!="EXCEPTION") and (seb_response!="TIMEOUT"):
+                        user_details.pop("txn_id")
+                        user_details.pop("phone_number")
+                        policy_details = user_details
+                    
+                        mpsp_response = MPSP(policy_details,seb_response,policySaleReference)
+                        print("MPSP Response", mpsp_response)
+                        logger.info(f"[MPSP RESPONSE] : {mpsp_response}")
+                        
+                        if (mpsp_response!="EXCEPTION") and (mpsp_response!="TIMEOUT"):
+                            jwt_token = seb_response.get("jwt_token")
+
+                            ips_response = IPS(jwt_token, policySaleReference,policy_details,seb_response)
+                            print("IPS Response", ips_response)
+                            logger.info(f"[IPS RESPONSE] : {ips_response}")
                             
-                            if (seb_response!="EXCEPTION") and (seb_response!="TIMEOUT"):
-                                user_details.pop("txn_id")
-                                user_details.pop("phone_number")
-                                policy_details = user_details
-                            
-                                mpsp_response = MPSP(policy_details,seb_response,policySaleReference)
-                                print("MPSP Response", mpsp_response)
-                                logger.info(f"[MPSP RESPONSE] : {mpsp_response}")
-                                
-                                if (mpsp_response!="EXCEPTION") and (mpsp_response!="TIMEOUT"):
-                                    jwt_token = seb_response.get("jwt_token")
+                            if (ips_response!="EXCEPTION") and (ips_response!="TIMEOUT"):
+                            # if True:
+                                event_name = "Payment made"
+                                send_push_notification_response = SPN(phonenumber,event_name)
+                                print("SPN Response", send_push_notification_response)
+                                logger.info(f"[SPN RESPONSE] : {send_push_notification_response}")
 
-                                    ips_response = IPS(jwt_token, policySaleReference,policy_details,seb_response)
-                                    print("IPS Response", ips_response)
-                                    logger.info(f"[IPS RESPONSE] : {ips_response}")
-                                    
-                                    if (ips_response!="EXCEPTION") and (ips_response!="TIMEOUT"):
-                                    # if True:
-                                        event_name = "Payment made"
-                                        send_push_notification_response = SPN(phonenumber,event_name)
-                                        print("SPN Response", send_push_notification_response)
-                                        logger.info(f"[SPN RESPONSE] : {send_push_notification_response}")
-
-                                        if (send_push_notification_response!="EXCEPTION") and (send_push_notification_response!="TIMEOUT"):
-                                            # data = "Please return to WhatsApp Bot for continuing journey"
-                                            status = flask.Response(status = 200)
-                                            # return render_template("index.html", data = data)
-                                            return status
-                                            
-                                        else:
-                                            return f"[~~~~~ SEND PUSH NOTIFCATIONS INTERAKT API] {send_push_notification_response}"
-                                            
-                                    else:
-                                        return f"[~~~~~ ISSUE POLICY SALE API] {mpsp_response}"
+                                if (send_push_notification_response!="EXCEPTION") and (send_push_notification_response!="TIMEOUT"):
+                                    # data = "Please return to WhatsApp Bot for continuing journey"
+                                    status = flask.Response(status = 200)
+                                    # return render_template("index.html", data = data)
+                                    return status
                                     
                                 else:
-                                    return f"[~~~~~ MAKE POLICY SALE PAYMENT API] {mpsp_response}"
-
+                                    return f"[~~~~~ SEND PUSH NOTIFCATIONS INTERAKT API] {send_push_notification_response}"
+                                    
                             else:
-                                return f"[~~~~~ SUBMIT EXTERNAL PAYMENT API] {seb_response}"
+                                return f"[~~~~~ ISSUE POLICY SALE API] {mpsp_response}"
+                            
+                        else:
+                            return f"[~~~~~ MAKE POLICY SALE PAYMENT API] {mpsp_response}"
 
-                            # else:
-                            #     return f"[~~~~~ WHATSAPP CONSENT API] {whatsapp_consent_response}"
+                    else:
+                        return f"[~~~~~ SUBMIT EXTERNAL PAYMENT API] {seb_response}"
+
+                    # else:
+                    #     return f"[~~~~~ WHATSAPP CONSENT API] {whatsapp_consent_response}"
             else:
                 print("Payment Failed")
                 # if True:
