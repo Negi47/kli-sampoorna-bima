@@ -106,11 +106,11 @@ def post_method():
     logger.info('FORM DATA %s',str(form_data))
 
     users = UserInfo.query.all()
-    print("** Users list found In DB **",users)
+    logger.info(f"** Users list found In DB ** {users}")
     if not users:
-        print("No users found. Database Empty")
+        logger.info("No users found. Database Empty")
     else:
-        print("** Came in Else Part **")
+        logger.info("** Came in Else Part **")
         user_details = policy_details = {}
         try:
             for user in users:
@@ -132,7 +132,7 @@ def post_method():
                         if user.policy_reference2 is not None:
                             user_details["policy_reference2"] = user.policy_reference2
 
-                    print("Tax id", txn_id)
+                    logger.info("Tax id  {txn_id}")
                     break;
             
 #            user_info = UserInfo(
@@ -142,11 +142,11 @@ def post_method():
 #            db.session.add(user_info)
 #            db.session.commit()
 #            db.session.refresh(user_info)
-            print("** Data from User Details **",user_details)
+            logger.info(f"** Data from User Details ** {user_details}")
             # if form_data["BusRes"] == "Success":
             if form_data["txn_status"] == "captured":
                 if not txn_id:
-                    print("user details not matched. ")
+                    logger.info("user details not matched. ")
 
                 else:
                     ## Call Sumit External Payment API
@@ -202,7 +202,7 @@ def post_method():
                     # else:
                     #     return f"[~~~~~ WHATSAPP CONSENT API] {whatsapp_consent_response}"
             else:
-                print("Payment Failed")
+                logger.info("Payment Failed")
                 # if True:
                 # phonenumber = user_details.get("phone_number")
                 # event_name = "Payment Failed"
