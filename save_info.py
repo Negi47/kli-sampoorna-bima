@@ -111,6 +111,7 @@ def post_method():
         logger.info("No users found. Database Empty")
     else:
         logger.info("** Came in Else Part **")
+        logger.info(f"** Received data from Haptik *** FormData={form_data}, DataType{type(form_data)}")
         user_details = policy_details = {}
         try:
             for user in users:
